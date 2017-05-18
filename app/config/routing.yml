@@ -1,0 +1,7 @@
+app:
+    resource: '@AppBundle/Controller/'
+    type: annotation
+
+order_list:
+    path:     /order
+    defaults: { _controller: AppBundle:Order:list }

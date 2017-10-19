@@ -4,6 +4,149 @@ parameters:
     #parameter_name: value
 
 services:
-    #service_name:
-    #    class: AppBundle\Directory\ClassName
-    #    arguments: ['@another_service_name', 'plain_value', '%parameter_name%']
+
+    #Репозиторий заказов
+    app.order_repository:
+        class: Doctrine\ORM\EntityRepository
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - AppBundle\Entity\Order
+
+
+    #Репозиторий клиентов
+    app.client_repository:
+        class: Doctrine\ORM\EntityRepository
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - AppBundle\Entity\Client
+
+    #Репозиторий велосипедов
+    app.bicycle_repository:
+        class: Doctrine\ORM\EntityRepository
+        factory: ["@doctrine.orm.entity_manager", getRepository]
+        arguments:
+            - AppBundle\Entity\Bicycle
+
+    #Сервис заказов
+    app.order_service:
+        class: AppBundle\Service\OrderService
+        arguments:
+            - '@app.order_repository'
+            - '@app.client_service'
+            - '@doctrine.orm.entity_manager'
+
+    #Сервис клиентов
+    app.client_service:
+        class: AppBundle\Service\ClientService
+        arguments:
+            - '@app.client_repository'
+
+    #Сервис велосипедов
+    app.bicycle_service:
+        class: AppBundle\Service\BicycleService
+        arguments:
+            - '@app.bicycle_repository'
+            - '@app.location_service'
+            - '@app.payment_policy_service'
+
+    #Сервис локаций
+    app.location_service:
+            class: AppBundle\Service\LocationService
+            arguments:
+                - '@doctrine.orm.entity_manager'
+
+    #Сервис политик оплаты
+    app.payment_policy_service:
+                class: AppBundle\Service\PaymentPolicyService
+                arguments:
+                    - '@doctrine.orm.entity_manager'
+
+    #Контроллер заказов
+    app.order_controller:
+        class: AppBundle\Controller\OrderController
+        arguments:
+            - '@app.order_service'
+            - '@app.serializer'
+
+    #Контроллер клиентов
+    app.client_controller:
+            class: AppBundle\Controller\ClientController
+            arguments:
+                - '@app.client_service'
+
+    #Контроллер велосипедов
+    app.bicycle_controller:
+        class: AppBundle\Controller\BicycleController
+        arguments:
+            - '@app.bicycle_service'
+            - '@app.serializer'
+
+    app.json_encoder:
+      class: Symfony\Component\Serializer\Encoder\JsonEncoder
+      public: false
+
+    app.object_normalizer:
+      class: Symfony\Component\Serializer\Normalizer\ObjectNormalizer
+      public: false
+
+    app.serializer:
+        class: Symfony\Component\Serializer\Serializer
+        arguments:
+            - ['@app.object_normalizer']
+            - ['@app.json_encoder']
+
+    app.new_bicycle_param_converter:
+        class: AppBundle\ParamConverter\NewBicycleParamConverter
+        tags:
+            - { name: request.param_converter, converter: new_bicycle_param_converter}
+        arguments:
+            - '@app.bicycle_service'
+
+    app.new_location_param_converter:
+        class: AppBundle\ParamConverter\NewLocationParamConverter
+        tags:
+            - { name: request.param_converter, converter: new_location_param_converter}
+        arguments:
+            - '@app.location_service'
+
+    app.new_payment_policy_param_converter:
+        class: AppBundle\ParamConverter\NewPaymentPolicyParamConverter
+        tags:
+            - { name: request.param_converter, converter: new_payment_policy_param_converter}
+        arguments:
+            - '@app.payment_policy_service'
+
+    app.new_client_param_converter:
+        class: AppBundle\ParamConverter\NewClientParamConverter
+        tags:
+            - { name: request.param_converter, converter: new_client_param_converter}
+        arguments:
+            - '@app.client_service'
+
+    app.exist_bicycle_param_converter:
+        class: AppBundle\ParamConverter\ExistBicycleParamConverter
+        tags:
+            - { name: request.param_converter, converter: exist_bicycle_param_converter}
+        arguments:
+            - '@app.bicycle_service'
+
+    app.exist_location_param_converter:
+        class: AppBundle\ParamConverter\ExistLocationParamConverter
+        tags:
+            - { name: request.param_converter, converter: exist_location_param_converter}
+        arguments:
+            - '@app.location_service'
+
+    app.exist_payment_policy_param_converter:
+        class: AppBundle\ParamConverter\ExistPaymentPolicyParamConverter
+        tags:
+            - { name: request.param_converter, converter: exist_payment_policy_param_converter}
+        arguments:
+            - '@app.payment_policy_service'
+
+    app.exist_client_param_converter:
+        class: AppBundle\ParamConverter\ExistClientParamConverter
+        tags:
+            - { name: request.param_converter, converter: exist_client_param_converter}
+        arguments:
+            - '@app.client_service'

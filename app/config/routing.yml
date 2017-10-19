@@ -4,4 +4,50 @@ app:
 
 order_list:
     path:     /order
-    defaults: { _controller: AppBundle:Order:list }
+    defaults: { _controller: app.order_controller:listAction }
+
+order_create:
+    path: /order/create
+    defaults: {_controller: app.order_controller:createAction}
+
+order_get:
+    path:     /order/{id}
+    defaults: { _controller: app.order_controller:getAction }
+
+order_open:
+    path: /order/{id}/open
+    defaults: { _controller: app.order_controller:openAction }
+
+order_close:
+    path: /order/{id}/close
+    defaults: { _controller: app.order_controller:closeAction }
+
+client_create:
+    path: /client
+    defaults: {_controller: app.client_controller:createAction}
+    requirements:
+        methods: POST
+
+client_edit:
+    path: /client/{id}
+    defaults: {_controller: app.client_controller:editAction}
+    requirements:
+        methods: PUT
+
+bicycle_list:
+    path: /bicycle
+    defaults: {_controller: app.bicycle_controller:listAction}
+    requirements:
+        methods: GET
+
+bicycle_create:
+    path: /bicycle
+    defaults: {_controller: app.bicycle_controller:createAction}
+    requirements:
+        methods: POST
+
+bicycle_edit:
+    path: /bicycle/{id}
+    defaults: {_controller: app.bicycle_controller:editAction}
+    requirements:
+        methods: PUT
